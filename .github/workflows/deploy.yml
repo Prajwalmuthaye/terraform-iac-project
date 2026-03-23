@@ -39,7 +39,7 @@ jobs:
       id: ec2
       run: |
         echo "ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
-      working-directory: terraform/
+
 
     - name: Deploy App via SSH
       run: |
