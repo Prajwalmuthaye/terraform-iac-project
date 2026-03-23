@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: terraform/
+
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: terraform/
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: terraform/
+
+    - name: Get EC2 IP
+      id: ec2
+      run: |
+        echo "ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
+      working-directory: terraform/
+
+    - name: Deploy App via SSH
+      run: |
+        ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.ec2.outputs.ip }} << 'EOF'
+          sudo yum update -y
+          sudo yum install -y docker
+          sudo service docker start
+          docker run -d -p 80:80 nginx
+        EOF
