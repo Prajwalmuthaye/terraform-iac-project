@@ -33,19 +33,4 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
-  
 
-    - name: Get EC2 IP
-      id: ec2
-      run: |
-        echo "ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
-
-
-    - name: Deploy App via SSH
-      run: |
-        ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.ec2.outputs.ip }} << 'EOF'
-          sudo yum update -y
-          sudo yum install -y docker
-          sudo service docker start
-          docker run -d -p 80:80 nginx
-        EOF
