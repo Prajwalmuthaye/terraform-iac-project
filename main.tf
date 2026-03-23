@@ -27,7 +27,7 @@ resource "aws_instance" "myweb01" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t3.micro"
   vpc_security_group_ids = [ "main" ]
-  subnet_id = aws_subnet.public
+  subnet_id = aws_subnet.public.id
   tags = {
     Name = "AppServer"
   }
