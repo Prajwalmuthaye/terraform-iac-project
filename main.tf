@@ -32,11 +32,3 @@ resource "aws_instance" "myweb01" {
     Name = "AppServer"
   }
 }
-
-
-  
-  
-  tags = {
-    Name = "AppServer"
-  }
-}
