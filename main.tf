@@ -7,7 +7,7 @@ resource "aws_instance" "web04" {
 
   vpc_security_group_ids = [ "vpc-0e92edc754644d44a" ]
   subnet_id = "subnet-04a25832138e1fa3e"
-  security_groups = ["sg-0959c8a7da48061aa"]
+  
   tags = {
     Name = "AppServer"
   }
